@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <%- include('../partials/head') %>
+
+<body>
+
+  <%- include('../partials/header') %>
+
+  <div class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8">
+
+      <div class="bg-white shadow-md rounded-md p-6">
+        <!-- Cart Table -->
+        <table class="w-full border-collapse">
+          <thead>
+            <tr class="border-b border-gray-200">
+              <th class="text-left py-4 font-medium text-gray-700 w-2/5">Product</th>
+              <th class="text-left py-4 font-medium text-gray-700 w-1/5">Price</th>
+              <th class="text-left py-4 font-medium text-gray-700 w-1/5">Quantity</th>
+              <th class="text-right py-4 font-medium text-gray-700 w-1/5">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Products -->
+
+            <% let subTotal = 0; %>
+            <% let total = 0; %>
+            <% user.cart.forEach(cartProduct => { %>
+            <tr class="border-b border-gray-200" data-product-id="<%= cartProduct._id %>">
+              <td class="py-6">
+                <div class="flex items-center">
+                  <div class="mr-2 relative">
+                    <button class="remove-button absolute -top-2 -left-2">×</button>
+                    <img src="/images/<%= cartProduct.image %>" alt="LCD Monitor" class="w-20 h-16 object-cover">
+                  </div>
+                  <span class="ml-4 text-gray-800"><%= cartProduct.name %> - <%= cartProduct.variantName %></span>
+                </div>
+              </td>
+              <td class="py-6 text-gray-800"><%= cartProduct.price.toLocaleString() %> VND</td>
+              <td class="py-6">
+                <div class="flex items-center">
+                  <div class="border border-gray-300 rounded flex">
+                    <button class="quantity-button">−</button>
+                    <input type="text" value="<%= cartProduct.quantity %>" class="quantity-input text-center border-0 focus:outline-none" />
+                    <button class="quantity-button">+</button>
+                  </div>
+                </div>
+              </td>
+
+              <% subTotal = cartProduct.price * cartProduct.quantity; %>
+              <td id="total<%= cartProduct._id %>" class="py-6 text-right text-gray-800 font-medium"><%= subTotal.toLocaleString() %> VND</td>
+              <% total += subTotal %>
+              <% subTotal = 0 %>
+            </tr>
+
+            <% }) %>
+            
+
+            <!-- total -->
+            <tr>
+              <td class="py-6"></td>
+              <td class="py-6 text-gray-800"></td>
+              <td class="py-6">Total</td>
+              <td id="cart-total" class="py-6 text-right text-gray-800 font-medium"><%= total.toLocaleString() %> VND</td>
+
+              
+            </tr>
+          </tbody>
+        </table>
+  
+        <!-- Buttons -->
+        <div class="flex justify-between mt-8">
+          <a href="products" class="px-8 py-3 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition">Return To Shop</a>
+          <button onclick="window.location.href='order-details'" id="save-address-btn" class="px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition">Proceed to checkout</button>
+
+        </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <%- include('../partials/footer') %>
+
+  <%- include('../partials/flash') %>
+
+  <script src="/js/script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  
+</body>
+</html>

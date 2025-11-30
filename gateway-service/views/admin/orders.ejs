@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('../partials/head') %>
+
+  <body>
+    <%- include('../partials/header') %>
+
+    <div class="container mx-auto px-6 py-10 max-w-6xl">
+
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-3xl font-medium text-red-600">My Orders</h1>
+          <p class="text-gray-600 mt-2">ADMIN</p>
+        </div>
+
+        <a href="/admin" class="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 transition">Back</a>
+      </div>
+
+      <!-- Filter Controls -->
+
+      <form id="filterForm" action="/admin/orders" method="GET" class="mb-6 flex items-center space-x-4">
+        <% if (discountId !== 'empty') { %>
+          <input hidden name="discountId" value="<%= discountId %>">
+        <% } %>
+  <select id="timeFilter" name="dateFilter"
+    class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-red-500">
+    <option value="system" <%= dateFilter === 'system' ? 'selected' : '' %>>System Wide</option>
+    <option value="today" <%= dateFilter === 'today' ? 'selected' : '' %>>Today</option>
+    <option value="yesterday" <%= dateFilter === 'yesterday' ? 'selected' : '' %>>Yesterday</option>
+    <option value="this_week" <%= dateFilter === 'this_week' ? 'selected' : '' %>>This Week</option>
+    <option value="this_month" <%= dateFilter === 'this_month' ? 'selected' : '' %>>This Month</option>
+    <option value="this_year" <%= dateFilter === 'this_year' ? 'selected' : '' %>>This Year</option>
+    <option value="custom" <%= dateFilter === 'custom' ? 'selected' : '' %>>Custom Range</option>
+  </select>
+
+  <div id="customRange" class="<%= dateFilter === 'custom' ? '' : 'hidden' %> flex items-center space-x-2">
+    <input type="date" name="startDate" class="border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+    <input type="date" name="endDate" class="border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+    <button type="submit"
+      class="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition shadow-sm">Filter</button>
+  </div>
+</form>
+    
+
+      <!-- Orders List -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <!-- Table Header -->
+        <div class="hidden md:grid md:grid-cols-12 gap-4 px-8 py-5 bg-gray-50 font-medium text-gray-700 border-b border-gray-100">
+          <div class="md:col-span-2">Order ID</div>
+          <div class="md:col-span-2">Date</div>
+          <div class="md:col-span-2">Total</div>
+          <div class="md:col-span-2">Status</div>
+          <div class="md:col-span-2"></div>
+        </div>
+
+        <!-- Order Items -->
+
+        <% orders.forEach(order => { %>
+
+          <%
+                  let buttonText = 'N/A';
+                  let statusTextColor = 'text-green-600';
+                  switch(order.status) {
+                    case 'pending':
+                      buttonText = 'confirmed';
+                      break;
+                    case 'confirmed':
+                      buttonText = 'shipped';
+                      break;
+                    case 'shipped':
+                      buttonText = 'received';
+                      break;
+                    case 'received':
+                      buttonText = 'finished';
+                      break;
+                    case 'finished':
+                      buttonText = 'disappeared';
+                      break;
+                    case 'canceled':
+                      buttonText = 'disappeared';
+                      statusTextColor = 'text-red-600';
+                      break;
+                  }
+                %>
+
+        <div class="border-b border-gray-100 hover:bg-red-50 transition duration-150">
+            <div class="md:grid md:grid-cols-12 gap-4 px-8 py-6 flex flex-col">
+            <div class="md:col-span-2 flex items-center">
+              <div class="md:hidden font-medium text-gray-700 mr-2">Order ID:</div>
+              <div class="text-sm text-gray-900 font-medium"><%= order._id %></div>
+            </div>
+            <div class="md:col-span-2 flex items-center">
+              <div class="md:hidden font-medium text-gray-700 mr-2">Date:</div>
+              <div class="text-sm text-gray-600"><%= new Date(order.createdAt).toDateString() %></div>
+            </div>
+            <div class="md:col-span-2 flex items-center">
+              <div class="md:hidden font-medium text-gray-700 mr-2">Total:</div>
+              <div class="text-sm font-medium text-gray-900"><%= order.finalTotalAmount.toLocaleString() %> VND</div>
+            </div>
+            <div class="md:col-span-2 flex items-center">
+              <div class="md:hidden font-medium text-gray-700 mr-2">Status:</div>
+              <span class="px-3 py-1.5 text-xs font-semibold rounded-full <%= statusTextColor %>"><%= order.status %></span>
+            </div>
+            <div class="md:col-span-2 flex items-center mt-3 md:mt-0 space-x-4">
+                <a href="/admin/order-specific-details/<%= order._id %>" class="px-4 py-2 border border-gray-300 text-sm text-gray-700 rounded-lg hover:bg-gray-100 transition shadow-sm">Details</a>
+
+                
+
+                <form class="<%= buttonText === 'disappeared' ? 'hidden' : '' %>" id="update-order-status-form<%= order._id %>" method="POST" action="/admin/update-order-status/<%= order._id %>">
+
+                  <input hidden name="status" value="<%= buttonText %>">
+                  <button type="button"
+                    onclick="confirmAndSubmit('update-order-status-form<%= order._id %>', 'Update order status?', 'Please make sure you want to change the status of the order.', 'Change')" 
+                    class="px-4 py-2 border text-white border-gray-300 text-sm bg-gray-400 rounded-lg hover:bg-gray-500 transition shadow-sm">
+                    <%= buttonText %>
+                  </button>
+                </form>
+
+
+                <form class="<%= buttonText === 'confirmed' ? '': 'hidden' %>" id="cancel-order-status-form<%= order._id %>" method="POST" action="/admin/update-order-status/<%= order._id %>">
+
+                  <input hidden name="status" value="canceled">
+                  <button type="button"
+                    onclick="confirmAndSubmit('cancel-order-status-form<%= order._id %>', 'Cancel order?', 'You cannot undo order cancelation. Are you sure?', 'Cancel')" 
+                    class="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition shadow-sm">
+                    cancel
+                  </button>
+                </form>
+  
+
+              </form>
+            </div>
+            </div>
+        </div>
+        <% }) %>
+
+        
+      </div>
+
+      <!-- pagniation -->
+      <div id="pagination-container" class="mt-8 flex items-center justify-between">
+          <div class="text-sm text-gray-700">
+            Showing page <span class="font-medium"><%= currentPage %></span> of <span class="font-medium"><%= totalPages %></span> | Total orders: <span class="font-medium"><%= totalOrders %></span>
+          </div>
+          <div class="flex space-x-2">
+            <!-- Previous Button -->
+            <% if (currentPage > 1) { %>
+              <button onclick="goToPagePagination(<%= currentPage - 1 %>)" class="px-4 py-2 bg-gray-100 text-gray-500 rounded-lg hover:bg-gray-200 transition shadow-sm">
+                Previous
+              </button>
+            <% } else { %>
+              <button class="px-4 py-2 bg-gray-100 text-gray-500 rounded-lg cursor-not-allowed shadow-sm">Previous</button>
+            <% } %>
+
+            <!-- Page Numbers -->
+            <% for (let i = 1; i <= totalPages; i++) { %>
+              <% if (i === currentPage) { %>
+                <button class="px-4 py-2 bg-red-500 text-white rounded-lg shadow-sm"><%= i %></button>
+              <% } else { %>
+                <button onclick="goToPagePagination(<%= i %>)" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition shadow-sm"><%= i %></button>
+              <% } %>
+            <% } %>
+
+            <!-- Next Button -->
+            <% if (currentPage < totalPages) { %>
+              <button onclick="goToPagePagination(<%= currentPage + 1 %>)" class="px-4 py-2 bg-gray-100 text-gray-500 rounded-lg hover:bg-gray-200 transition shadow-sm">
+                Next
+              </button>
+            <% } else { %>
+              <button class="px-4 py-2 bg-gray-100 text-gray-500 rounded-lg cursor-not-allowed shadow-sm">Next</button>
+            <% } %>
+          </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+
+    <%- include('../partials/flash') %>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/script.js"></script>
+
+  </body>
+</html>

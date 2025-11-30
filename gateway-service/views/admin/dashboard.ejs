@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('../partials/head') %>
+  <body class="bg-gray-50">
+    <%- include('../partials/header') %>
+
+    <div class="container mx-auto px-4 py-8">
+      <div class="bg-white shadow-md rounded-md p-6">
+
+        <!-- Time Filter Dropdown -->
+        <div class="flex justify-end mb-6">
+          <form id="dateFilterForm" action="/admin" method="GET" class="flex items-center space-x-4">
+            <select id="dateFilter" name="dateFilter" class="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-red-500">
+            <option value="this_year" <%= dateFilter === 'this_year' ? 'selected' : '' %>>This Year</option>
+            <option value="this_quarter" <%= dateFilter === 'this_quarter' ? 'selected' : '' %>>This Quarter</option>
+            <option value="this_month" <%= dateFilter === 'this_month' ? 'selected' : '' %>>This Month</option>
+            <option value="this_week" <%= dateFilter === 'this_week' ? 'selected' : '' %>>This Week</option>
+            <option value="custom" <%= dateFilter === 'custom' ? 'selected' : '' %>>Custom Range</option>
+          </select>
+          <div id="dateFilterCustomRange" class="<%= dateFilter === 'custom' ? '' : 'hidden' %> ml-4 space-x-2">
+            <input type="date" id="startDate" name="start" class="border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+            <input type="date" id="endDate" name="end" class="border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+            <button type="submit" class="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition shadow-sm">Apply</button>
+          </div>
+          </form>
+        </div>
+
+        <!-- Stats Cards -->
+        <div>
+          <p class="text-2xl font-semibold text-gray-800 mb-6">Based on all data</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6 mb-8">
+          
+          <div class="bg-white p-6 rounded-2xl shadow-md text-center">
+            <h3 class="text-lg font-semibold">Total Users</h3>
+            <p class="text-xl font-bold"><%= totalUsers.toLocaleString() %></p>
+          </div>
+          <div class="bg-white p-6 rounded-2xl shadow-md text-center">
+            <h3 class="text-lg font-semibold">New Users</h3>
+            <p class="text-xl font-bold"><%= newUsers.toLocaleString() %></p>
+          </div>
+          <div class="bg-white p-6 rounded-2xl shadow-md text-center">
+            <h3 class="text-lg font-semibold">Total Orders</h3>
+            <p class="text-xl font-bold"><%= totalOrders.toLocaleString() %></p>
+          </div>
+          <div class="bg-yellow-100 p-6 rounded-2xl shadow-md text-center">
+            <h3 class="text-lg font-semibold">Total Revenue</h3>
+            <p class="text-xl font-bold"><%= Number(totalRevenue.toFixed(2)).toLocaleString() %> VND</p>
+          </div>
+          <div class="bg-yellow-100 p-6 rounded-2xl shadow-md text-center">
+            <h3 class="text-lg font-semibold">Total Profit</h3>
+            <p class="text-xl font-bold"><%= Number(totalProfit.toFixed(2)).toLocaleString() %> VND</p>
+          </div>
+        </div>
+        </div>
+
+        <div>
+          <p class="text-2xl font-semibold text-gray-800 mb-6">For selected time period</p>
+        <div class="items-center grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
+          <div class="bg-green-100 p-6 rounded-2xl shadow-md text-center">
+            <h3 class="text-lg font-semibold">Orders sold</h3>
+            <p class="text-xl font-bold"><%= orders.toLocaleString() %></p>
+          </div>
+          <div class="bg-green-100 p-6 rounded-2xl shadow-md text-center">
+            <h3 class="text-lg font-semibold">Revenue</h3>
+            <p class="text-xl font-bold"><%= Number(revenue.toFixed(2)).toLocaleString() %> VND</p>
+          </div>
+          <div class="bg-green-100 p-6 rounded-2xl shadow-md text-center">
+            <h3 class="text-lg font-semibold">Profit</h3>
+            <p class="text-xl font-bold"><%= Number(profit.toFixed(2)).toLocaleString() %> VND</p>
+          </div>
+          
+        </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          <div class="bg-white border p-4 rounded-md">
+            <h4 class="text-lg font-semibold mb-2">Best-Selling Products</h4>
+            <canvas id="bestSellingChart" style="height: 250px !important; max-height: 250px;"></canvas>
+          </div>
+          <div class="bg-white border p-4 rounded-md">
+            <h4 class="text-lg font-semibold mb-2">Revenue & Profit</h4>
+            <canvas id="revenueProfitChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Advanced Comparison Charts -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="bg-white border p-4 rounded-md">
+            <h4 class="text-lg font-semibold mb-2">Products Sold by Type (All Time)</h4>
+            <canvas id="productTypeChart"></canvas>
+          </div>
+          <div class="bg-white border p-4 rounded-md">
+            <h4 class="text-lg font-semibold mb-2">Orders by Period</h4>
+            <canvas id="ordersChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Management Buttons -->
+        <div class="flex flex-col justify-between my-16 px-8 space-y-4">
+          <button onclick="window.location.href='/admin/products'" class="px-6 py-2 bg-red-400 text-white rounded-md hover:bg-red-500 transition">Product Management</button>
+          <button onclick="window.location.href='/admin/users'" class="px-6 py-2 bg-red-400 text-white rounded-md hover:bg-red-500 transition">User Management</button>
+          <button onclick="window.location.href='/admin/orders'" class="px-6 py-2 bg-red-400 text-white rounded-md hover:bg-red-500 transition">Order Management</button>
+          <button onclick="window.location.href='/admin/discounts'" class="px-6 py-2 bg-red-400 text-white rounded-md hover:bg-red-500 transition">Discount Management</button>
+        </div>
+      </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+
+    <%- include('../partials/flash') %>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <script>
+      window.chartData = {
+        bestSellingLabels: <%- JSON.stringify(bestSellingLabels || []) %>,
+        bestSellingsData: <%- JSON.stringify(bestSellingsData || []) %>,
+        productSoldByCatLabels: <%- JSON.stringify(productSoldByCatLabels || []) %>,
+        productSoldByCatData: <%- JSON.stringify(productSoldByCatData || []) %>,
+
+        revenueProfitLabels: <%- JSON.stringify(revenueProfitLabels || []) %>,
+        revenueProfitDataRevenue: <%- JSON.stringify(revenueProfitDataRevenue || []) %>,
+        revenueProfitDataProfit: <%- JSON.stringify(revenueProfitDataProfit || []) %>,
+        ordersChartLabels: <%- JSON.stringify(ordersChartLabels || []) %>,
+        ordersChartData: <%- JSON.stringify(ordersChartData || []) %>
+      };
+    </script>
+    <script src="/js/script.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  </body>
+</html>

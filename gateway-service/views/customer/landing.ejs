@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+<%- include('../partials/head') %>
+
+<body class="bg-gray-50">
+  <%- include('../partials/header') %>
+
+  <main class="container mx-auto px-4 py-12">
+
+    <div class="items-center w-100 mb-8">
+      <a href="/products" class="px-6 py-2 transition border border-gray-300 rounded-md text-gray-700 hover:bg-red-600 hover:text-white">View all products</a>
+    </div>
+    <!-- New Products -->
+    <section class="mb-8 category-section">
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <div class="inline-block bg-red-500 w-2 h-8 mr-2 rounded"></div>
+          <h2 class="inline-block text-2xl font-bold text-gray-800">New Products</h2>
+        </div>
+        <a href="products" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition duration-300">
+          View All
+        </a>
+      </div>
+
+      <div class="relative">
+        <div class="overflow-x-auto scroll-container flex space-x-4 pb-4 px-1">
+
+          <% newProducts.forEach(product => { %>
+        
+          <div class="bg-white rounded-lg shadow-md overflow-hidden product-card min-w-[250px] scroll-item" onclick="location.href=`details/<%= product._id %>`">
+            <div class="relative">
+              <img src="/images/<%= product.image %>" alt="<%= product.name %>" class="w-full h-48 object-cover">
+            </div>
+            <div class="p-4">
+              <h3 class="text-lg font-semibold text-gray-800 mb-2"><%= product.name %></h3>
+              <p class="font-semibold text-gray-600 text-sm mb-3"><%= product.tag %></p>
+              <p class="text-gray-600 text-sm mb-3"><%= product.description %></p>
+              <div class="flex items-center mb-2">
+                <span class="text-red-500 font-semibold"><%= product.price.toLocaleString() %> VND</span>
+                <!-- <span class="text-gray-400 line-through ml-2">$599</span> -->
+              </div>
+
+              <!-- <div class="flex items-center">
+                <div class="star-rating mr-1">★★★★★</div>
+                <span class="text-gray-600 text-sm">(24)</span>
+              </div> -->
+
+                <% const fullStars = Math.floor(product.rating.average); %>
+                <% const halfStar = product.rating.average % 1 >= 0.5; %>
+                <% const emptyStars = 5 - fullStars - (halfStar ? 1 : 0); %>
+
+                <div class="flex items-center">
+                  <% for (let i = 0; i < fullStars; i++) { %>
+                    <i class="fas fa-star star-rating mr-1"></i>
+                  <% } %>
+                  <% if (halfStar) { %>
+                    <i class="fas fa-star-half-alt star-rating mr-1"></i>
+                  <% } %>
+                  <% for (let i = 0; i < emptyStars; i++) { %>
+                    <i class="far fa-star star-rating mr-1"></i>
+                  <% } %>
+                  <span class="text-gray-600 text-sm">(<%= product.rating.average.toFixed(1) %>)</span>
+                  <span class="text-gray-600 text-sm ml-4">(<%= product.sales %> sold)</span>
+                </div>
+            </div>
+          </div>
+
+          <% }) %>
+
+         
+        </div>
+      </div>
+    </section>
+
+    <!-- Best Sellers -->
+    <section class="mb-8 category-section">
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <div class="inline-block bg-red-500 w-2 h-8 mr-2 rounded"></div>
+          <h2 class="inline-block text-2xl font-bold text-gray-800">Best Sellers</h2>
+        </div>
+        <a href="products" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition duration-300">
+          View All
+        </a>
+      </div>
+
+      <div class="relative">
+        <div class="overflow-x-auto scroll-container flex space-x-4 pb-4 px-1">
+          <% bestSellerProducts.forEach(product => { %>
+        
+          <div class="bg-white rounded-lg shadow-md overflow-hidden product-card min-w-[250px] scroll-item" onclick="location.href=`details/<%= product._id %>`">
+            <div class="relative">
+              <img src="/images/<%= product.image %>" alt="<%= product.name %>" class="w-full h-48 object-cover">
+            </div>
+            <div class="p-4">
+              <h3 class="text-lg font-semibold text-gray-800 mb-2"><%= product.name %></h3>
+              <p class="font-semibold text-gray-600 text-sm mb-3"><%= product.tag %></p>
+              <p class="text-gray-600 text-sm mb-3"><%= product.description %></p>
+              <div class="flex items-center mb-2">
+                <span class="text-red-500 font-semibold"><%= product.price.toLocaleString() %> VND</span>
+                <!-- <span class="text-gray-400 line-through ml-2">$599</span> -->
+              </div>
+
+              <!-- <div class="flex items-center">
+                <div class="star-rating mr-1">★★★★★</div>
+                <span class="text-gray-600 text-sm">(24)</span>
+              </div> -->
+
+                <% const fullStars = Math.floor(product.rating.average); %>
+                <% const halfStar = product.rating.average % 1 >= 0.5; %>
+                <% const emptyStars = 5 - fullStars - (halfStar ? 1 : 0); %>
+
+                <div class="flex items-center">
+                  <% for (let i = 0; i < fullStars; i++) { %>
+                    <i class="fas fa-star star-rating mr-1"></i>
+                  <% } %>
+                  <% if (halfStar) { %>
+                    <i class="fas fa-star-half-alt star-rating mr-1"></i>
+                  <% } %>
+                  <% for (let i = 0; i < emptyStars; i++) { %>
+                    <i class="far fa-star star-rating mr-1"></i>
+                  <% } %>
+                  <span class="text-gray-600 text-sm">(<%= product.rating.average.toFixed(1) %>)</span>
+                  <span class="text-gray-600 text-sm ml-4">(<%= product.sales %> sold)</span>
+                </div>
+            </div>
+          </div>
+
+          <% }) %>
+        </div>
+      </div>
+    </section>
+
+    <!-- GPUs -->
+    <section class="mb-8 category-section">
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <div class="inline-block bg-red-500 w-2 h-8 mr-2 rounded"></div>
+          <h2 class="inline-block text-2xl font-bold text-gray-800">GPUs</h2>
+        </div>
+        <a href="products" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition duration-300">
+          View All
+        </a>
+      </div>
+
+      <div class="relative">
+        <div class="overflow-x-auto scroll-container flex space-x-4 pb-4 px-1">
+          <% gpuProducts.forEach(product => { %>
+        
+          <div class="bg-white rounded-lg shadow-md overflow-hidden product-card min-w-[250px] scroll-item" onclick="location.href=`details/<%= product._id %>`">
+            <div class="relative">
+              <img src="/images/<%= product.image %>" alt="<%= product.name %>" class="w-full h-48 object-cover">
+            </div>
+            <div class="p-4">
+              <h3 class="text-lg font-semibold text-gray-800 mb-2"><%= product.name %></h3>
+              <p class="font-semibold text-gray-600 text-sm mb-3"><%= product.tag %></p>
+              <p class="text-gray-600 text-sm mb-3"><%= product.description %></p>
+              <div class="flex items-center mb-2">
+                <span class="text-red-500 font-semibold"><%= product.price.toLocaleString() %> VND</span>
+                <!-- <span class="text-gray-400 line-through ml-2">$599</span> -->
+              </div>
+
+                <% const fullStars = Math.floor(product.rating.average); %>
+                <% const halfStar = product.rating.average % 1 >= 0.5; %>
+                <% const emptyStars = 5 - fullStars - (halfStar ? 1 : 0); %>
+
+                <div class="flex items-center">
+                  <% for (let i = 0; i < fullStars; i++) { %>
+                    <i class="fas fa-star star-rating mr-1"></i>
+                  <% } %>
+                  <% if (halfStar) { %>
+                    <i class="fas fa-star-half-alt star-rating mr-1"></i>
+                  <% } %>
+                  <% for (let i = 0; i < emptyStars; i++) { %>
+                    <i class="far fa-star star-rating mr-1"></i>
+                  <% } %>
+                  <span class="text-gray-600 text-sm">(<%= product.rating.average.toFixed(1) %>)</span>
+                  <span class="text-gray-600 text-sm ml-4">(<%= product.sales %> sold)</span>
+                </div>
+            </div>
+          </div>
+
+          <% }) %>
+        </div>
+      </div>
+    </section>
+
+    <!-- CPUs -->
+    <section class="mb-8 category-section">
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <div class="inline-block bg-red-500 w-2 h-8 mr-2 rounded"></div>
+          <h2 class="inline-block text-2xl font-bold text-gray-800">CPUs</h2>
+        </div>
+        <a href="products" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition duration-300">
+          View All
+        </a>
+      </div>
+
+      <div class="relative">
+        <div class="overflow-x-auto scroll-container flex space-x-4 pb-4 px-1">
+          <% cpuProducts.forEach(product => { %>
+        
+          <div class="bg-white rounded-lg shadow-md overflow-hidden product-card min-w-[250px] scroll-item" onclick="location.href=`details/<%= product._id %>`">
+            <div class="relative">
+              <img src="/images/<%= product.image %>" alt="<%= product.name %>" class="w-full h-48 object-cover">
+            </div>
+            <div class="p-4">
+              <h3 class="text-lg font-semibold text-gray-800 mb-2"><%= product.name %></h3>
+              <p class="font-semibold text-gray-600 text-sm mb-3"><%= product.tag %></p>
+              <p class="text-gray-600 text-sm mb-3"><%= product.description %></p>
+              <div class="flex items-center mb-2">
+                <span class="text-red-500 font-semibold"><%= product.price.toLocaleString() %> VND</span>
+                <!-- <span class="text-gray-400 line-through ml-2">$599</span> -->
+              </div>
+
+                <% const fullStars = Math.floor(product.rating.average); %>
+                <% const halfStar = product.rating.average % 1 >= 0.5; %>
+                <% const emptyStars = 5 - fullStars - (halfStar ? 1 : 0); %>
+
+                <div class="flex items-center">
+                  <% for (let i = 0; i < fullStars; i++) { %>
+                    <i class="fas fa-star star-rating mr-1"></i>
+                  <% } %>
+                  <% if (halfStar) { %>
+                    <i class="fas fa-star-half-alt star-rating mr-1"></i>
+                  <% } %>
+                  <% for (let i = 0; i < emptyStars; i++) { %>
+                    <i class="far fa-star star-rating mr-1"></i>
+                  <% } %>
+                  <span class="text-gray-600 text-sm">(<%= product.rating.average.toFixed(1) %>)</span>
+                  <span class="text-gray-600 text-sm ml-4">(<%= product.sales %> sold)</span>
+                </div>
+            </div>
+          </div>
+
+          <% }) %>
+        </div>
+      </div>
+    </section>
+
+    <!-- HDDs -->
+    <section class="mb-8 category-section">
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <div class="inline-block bg-red-500 w-2 h-8 mr-2 rounded"></div>
+          <h2 class="inline-block text-2xl font-bold text-gray-800">HDDs</h2>
+        </div>
+        <a href="products.html?category=storage" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition duration-300">
+          View All
+        </a>
+      </div>
+
+      <div class="relative">
+        <div class="overflow-x-auto scroll-container flex space-x-4 pb-4 px-1">
+          <% hddProducts.forEach(product => { %>
+        
+          <div class="bg-white rounded-lg shadow-md overflow-hidden product-card min-w-[250px] scroll-item" onclick="location.href=`details/<%= product._id %>`">
+            <div class="relative">
+              <img src="/images/<%= product.image %>" alt="<%= product.name %>" class="w-full h-48 object-cover">
+            </div>
+            <div class="p-4">
+              <h3 class="text-lg font-semibold text-gray-800 mb-2"><%= product.name %></h3>
+              <p class="font-semibold text-gray-600 text-sm mb-3"><%= product.tag %></p>
+              <p class="text-gray-600 text-sm mb-3"><%= product.description %></p>
+              <div class="flex items-center mb-2">
+                <span class="text-red-500 font-semibold"><%= product.price.toLocaleString() %> VND</span>
+                <!-- <span class="text-gray-400 line-through ml-2">$599</span> -->
+              </div>
+
+                <% const fullStars = Math.floor(product.rating.average); %>
+                <% const halfStar = product.rating.average % 1 >= 0.5; %>
+                <% const emptyStars = 5 - fullStars - (halfStar ? 1 : 0); %>
+
+                <div class="flex items-center">
+                  <% for (let i = 0; i < fullStars; i++) { %>
+                    <i class="fas fa-star star-rating mr-1"></i>
+                  <% } %>
+                  <% if (halfStar) { %>
+                    <i class="fas fa-star-half-alt star-rating mr-1"></i>
+                  <% } %>
+                  <% for (let i = 0; i < emptyStars; i++) { %>
+                    <i class="far fa-star star-rating mr-1"></i>
+                  <% } %>
+                  <span class="text-gray-600 text-sm">(<%= product.rating.average.toFixed(1) %>)</span>
+                  <span class="text-gray-600 text-sm ml-4">(<%= product.sales %> sold)</span>
+                </div>
+            </div>
+          </div>
+
+          <% }) %>
+        </div>
+      </div>
+    </section>
+
+    <!-- SSDs -->
+    <section class="mb-8 category-section">
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <div class="inline-block bg-red-500 w-2 h-8 mr-2 rounded"></div>
+          <h2 class="inline-block text-2xl font-bold text-gray-800">SSDs</h2>
+        </div>
+        <a href="products" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition duration-300">
+          View All
+        </a>
+      </div>
+
+      <div class="relative">
+        <div class="overflow-x-auto scroll-container flex space-x-4 pb-4 px-1">
+          <% ssdProducts.forEach(product => { %>
+        
+          <div class="bg-white rounded-lg shadow-md overflow-hidden product-card min-w-[250px] scroll-item" onclick="location.href=`details/<%= product._id %>`">
+            <div class="relative">
+              <img src="/images/<%= product.image %>" alt="<%= product.name %>" class="w-full h-48 object-cover">
+            </div>
+            <div class="p-4">
+              <h3 class="text-lg font-semibold text-gray-800 mb-2"><%= product.name %></h3>
+              <p class="font-semibold text-gray-600 text-sm mb-3"><%= product.tag %></p>
+              <p class="text-gray-600 text-sm mb-3"><%= product.description %></p>
+              <div class="flex items-center mb-2">
+                <span class="text-red-500 font-semibold"><%= product.price.toLocaleString() %> VND</span>
+                <!-- <span class="text-gray-400 line-through ml-2">$599</span> -->
+              </div>
+
+                <% const fullStars = Math.floor(product.rating.average); %>
+                <% const halfStar = product.rating.average % 1 >= 0.5; %>
+                <% const emptyStars = 5 - fullStars - (halfStar ? 1 : 0); %>
+
+                <div class="flex items-center">
+                  <% for (let i = 0; i < fullStars; i++) { %>
+                    <i class="fas fa-star star-rating mr-1"></i>
+                  <% } %>
+                  <% if (halfStar) { %>
+                    <i class="fas fa-star-half-alt star-rating mr-1"></i>
+                  <% } %>
+                  <% for (let i = 0; i < emptyStars; i++) { %>
+                    <i class="far fa-star star-rating mr-1"></i>
+                  <% } %>
+                  <span class="text-gray-600 text-sm">(<%= product.rating.average.toFixed(1) %>)</span>
+                  <span class="text-gray-600 text-sm ml-4">(<%= product.sales %> sold)</span>
+                </div>
+            </div>
+          </div>
+
+          <% }) %>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <%- include('../partials/footer') %>
+
+  <%- include('../partials/flash') %>
+
+  <script src="/js/script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</body>
+</html>
